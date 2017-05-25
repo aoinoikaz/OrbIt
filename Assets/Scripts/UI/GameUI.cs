@@ -5,26 +5,30 @@ using UnityEngine.SceneManagement;
 
 public class GameUI : MonoBehaviour
 {
+    // Instance of this game ui singleton
     public static GameUI Instance;
+
+    // The screen bounds
+    public EdgeCollider2D ScreenBounds;
+
+    // Main camera reference
+    public Camera MainCamera;
 
     // Amount of time left in each round
     public float TimeLeft;
     public float StartTime;
 
-    // Label for the amount of time left
+    // Label info
     public Text TimeLeftLabel;
     public Text PointsLabel;
     public Text OrbsLeftLabel;
-    public GameObject GameOverPanel;
 
+    // UI elements
+    public GameObject GameOverPanel;
     public GameObject ThrowLine;
 
-    public EdgeCollider2D ScreenBounds;
-
-    public Camera MainCamera;
-
+    // Amount to offset the y axis of the throwline
     private const float yOffset = 0.5f;
-
 
 
     // Use this for initialization
@@ -45,21 +49,22 @@ public class GameUI : MonoBehaviour
         if (TimeLeftLabel == null)  
           TimeLeftLabel = GameObject.Find("TimeLeftLabel").GetComponent<Text>();
 
+        if(ScreenBounds == null)
+        ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
+
         if (GameOverPanel == null)
             GameOverPanel = GameObject.Find("GameOverPanel");
 
         if (ThrowLine == null)
             ThrowLine = GameObject.Find("ThrowLine");
 
-        if(ScreenBounds == null)
-        ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
-
         // Ensure its disabled
         if (GameOverPanel.activeInHierarchy)
             GameOverPanel.SetActive(false);
 
+        MainCamera = Camera.main;
+
         StartTime = TimeLeft = 30;
-        
     }
 
 
@@ -87,15 +92,16 @@ public class GameUI : MonoBehaviour
         }
     }
 
+
     public void SetupUI()
     {
-        MainCamera = Camera.main;
-
+        // Get the coordinates of the the 4 vertex's of the camera viewport
         Vector2 bottomLeft = MainCamera.ScreenToWorldPoint(new Vector3(0, 0, MainCamera.nearClipPlane));
         Vector2 topLeft = MainCamera.ScreenToWorldPoint(new Vector3(0, MainCamera.pixelHeight, MainCamera.nearClipPlane));
         Vector2 topRight = MainCamera.ScreenToWorldPoint(new Vector3(MainCamera.pixelWidth, MainCamera.pixelHeight, MainCamera.nearClipPlane));
         Vector2 bottomRight = MainCamera.ScreenToWorldPoint(new Vector3(MainCamera.pixelWidth, 0, MainCamera.nearClipPlane));
 
+        // Assign the edge point references into a square viewport
         Vector2[] edgePoints = new[] { bottomLeft, topLeft, topRight, bottomRight, bottomLeft };
         ScreenBounds.points = edgePoints;
 

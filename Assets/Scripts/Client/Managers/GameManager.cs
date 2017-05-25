@@ -4,9 +4,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // An instance holder for the default orb
-    public Orb OrbInstance;
-
     // Whehter or not this game is in progress
     public bool InProgress;
 
@@ -30,7 +27,7 @@ public class GameManager : MonoBehaviour
         if (InProgress && RowManager.Instance.OrbsLeftInRow == 0 && !RowManager.Instance.IsShifting)
         {
             // Shift rows
-            RowManager.Instance.Shift(OrbInstance);
+            RowManager.Instance.Shift(ResourceManager.OrbInstance);
         }
 
         if (Points == 0 || GameUI.Instance.TimeLeft < 1)
@@ -43,15 +40,13 @@ public class GameManager : MonoBehaviour
     public void InitializeGame()
     {
         // Load resources
-        // TODO: make a resource manager
-        if (OrbInstance == null)
-            OrbInstance = Resources.Load<Orb>("Prefabs/Orb");
+        ResourceManager.LoadGameResources();
 
         // Initialize user interface 
         GameUI.Instance.SetupUI();
 
         // Spawn the rows, set orb identifiers and enable interaction
-        RowManager.Instance.SpawnRows(OrbInstance);
+        RowManager.Instance.SpawnRows(ResourceManager.OrbInstance);
         RowManager.Instance.SetOrbIDs();
         RowManager.Instance.Activate();
 

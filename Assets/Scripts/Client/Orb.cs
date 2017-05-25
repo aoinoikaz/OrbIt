@@ -24,20 +24,21 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     // A public reference to the orbs generic colour
     public OrbType Colour;
 
+    // Reference to this orbs physics rigidbody and it's rendering component
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D orbRigidbody;
+
     // Simply the orb colour
     private Sprite spriteColour;
-
-    // Reference to the orb sprites
-    private Sprite[] orbColours = new Sprite[5];
 
     private Vector3 startPosition;
     private Vector3 offsetToMouse;
     private float distanceToCamera;
 
+    // The max speed the orb can move
     private const float MAX_SPEED = 9;
 
-    private SpriteRenderer spriteRenderer;
-    private Rigidbody2D orbRigidbody;
+
 
     // Use this for initialization
     void Awake ()
@@ -45,9 +46,8 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         spriteRenderer = GetComponent<SpriteRenderer>();
         orbRigidbody = GetComponent<Rigidbody2D>();
 
-        // Load and randomize colour
-        orbColours = Resources.LoadAll<Sprite>("Graphics/Orbs");
-        spriteColour = orbColours[Random.Range(0, 5)];
+        // Randomly assign a colour to this orb
+        spriteColour = ResourceManager.OrbColours[Random.Range(0, 5)];
 
         // Start rendering the assigned random colour
         spriteRenderer.sprite = spriteColour;
@@ -58,13 +58,16 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         Lifetime = 2;
     }
 
+
     private void Update()
     {
-        if (this.transform.position.y >= GameUI.Instance.ThrowLine.transform.position.y)
+        // Check if this orb has passed the throw line
+        if (transform.position.y >= GameUI.Instance.ThrowLine.transform.position.y)
         {
             LinePassed = true;
         }
     }
+
 
     public void OnBeginDrag(PointerEventData eventData)
     {
