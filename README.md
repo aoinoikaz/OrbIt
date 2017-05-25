@@ -1,4 +1,4 @@
-# The-Divergent-Network-API PRESENTS: ORBiT
+# TheDivergentNetwork PRESENTS: ORBiT
 
 ### What is it? ###
 
