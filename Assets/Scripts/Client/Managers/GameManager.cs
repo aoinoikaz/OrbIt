@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour
         RowManager.Instance.SetOrbIDs();
         RowManager.Instance.Activate();
 
+        NetManager.Instance.SpawnNets(ResourceManager.NetInstance);
+
         // Set game state
         InProgress = true;
 
