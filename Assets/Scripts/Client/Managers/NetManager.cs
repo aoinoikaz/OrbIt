@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+
 public class NetManager : MonoBehaviour
 {
     // This manager instance
@@ -8,13 +9,9 @@ public class NetManager : MonoBehaviour
     public Transform[] NetPositions;
 
     // Constants
-    private const float xOffset = 0.5f;
-    private const int AmountOfNets = 5;
+    private const float xOffset = 1.6f;
+    private const int AmountOfNets = 4;
 
-    // what do we need:
-    // we need a reference to each net so we can randomize their positions
-    // maybe index's of each net for easy identification?]
-    // idk ull figure it out after your shower
 
     void Awake()
     {
@@ -22,14 +19,20 @@ public class NetManager : MonoBehaviour
             Instance = this;
         else if (Instance != this)
             Destroy(this);
+
+        NetPositions = new Transform[AmountOfNets];
+
+        Debug.Log("NetManager: " + this);
     }
 
 
-    // TODO: FINISH IMPLEMENTATION OF NET RANDOMIZATION
+    // This function simply spawns the nets
     public void SpawnNets(Net net)
     {
         Net currentNet = null;
         Net previousNet = null;
+
+        Debug.Log("Inside SpawnNets: " + net);
 
         for (int i = 0; i < AmountOfNets; i++)
         {
@@ -47,21 +50,35 @@ public class NetManager : MonoBehaviour
                 previousNet = currentNet;
                 currentNet = null;
             }
+
+            // Assign the colour to each net
+            previousNet.spriteColour = ResourceManager.NetColours[i];
+
+            // Assign this nets position to the position grid
+            NetPositions[i] = previousNet.transform;
         }
     }
 
 
-    // this function will randomize the position of each net at runtime
-    public void RandomizeNets()
+    public void Shuffle()
     {
-        for (int i = 0; i < AmountOfNets; i++)
-        {
-            
-        }
+        int n = NetPositions.Length;
 
-        // this function will be called every time a row has been finished shifting
-        // first we need get the current positions of all the nets
-        // then we needa iterate through the array of nets and for each net, swap it with the one that is in front, 
-        // if at the end of array, swap it with i - 1
+        while (n > 1)
+        {
+            n--;
+
+            int k = Random.Range(0, AmountOfNets);
+
+            Debug.Log("Random inx: " + k);
+            Debug.Log(NetPositions[k].position);
+
+            Vector3 pos = NetPositions[k].position;
+
+            NetPositions[k].position = NetPositions[n].position;
+
+            NetPositions[n].position = new Vector3(pos.x, pos.y, pos.z);
+
+        }
     }
 }

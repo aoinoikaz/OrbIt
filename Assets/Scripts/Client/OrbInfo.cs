@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class OrbInfo : MonoBehaviour
+public class OrbInfo
 {
     public static OrbType DetermineColourType(char colourCode)
     {
@@ -23,9 +23,6 @@ public class OrbInfo : MonoBehaviour
             case 'Y':
                 type = OrbType.Yellow;
                 break;
-            case 'P':
-                type = OrbType.Pink;
-                break;
         }
         return type.Value;
     }
@@ -39,5 +36,5 @@ public enum OrbType
     Green,
     Red,
     Yellow,
-    Pink
+    None
 }

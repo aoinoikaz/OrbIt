@@ -7,38 +7,45 @@ using UnityEngine.EventSystems;
 // This class provides functionality to an individual orb. Dragging, throwing and collision validation
 public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    // Reference to this orbs physics rigidbody and it's rendering component
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D orbRigidbody;
+
+    private TextMesh orbTimer;
+
+    // Simply the orb colour
+    private Sprite spriteColour;
+
+    // Used for orb physics
+    private Vector3 startPosition;
+    private Vector3 offsetToMouse;
+    private float distanceToCamera;
+
+    private string TimerText;
+
+    // The max speed the orb can move
+    private const float MAX_SPEED = 9.15f;
+
+    // An identifier that represents this orbs position on the orb grid
+    public KeyValuePair<int, int> ID;
+
+    // A public reference to the orbs generic colour
+    public OrbType Colour;
+
     // The lifetime of the orb in seconds
     public float Lifetime { get; set; }
 
     // Whether or not this orb can be interacted with/thrown
     public bool IsThrowable { get; set; }
 
+    // Whether or not this orb has passed the throw line or not
     public bool LinePassed { get; set; }
+
+    // Whether or not this orb is currently being touched
+    public bool Touched { get; set; }
 
     // Whether or not this orbs position is static
     public bool IsFrozen { get; set; }
-
-    // An identifier that represents it's position on the orb grid
-    public KeyValuePair<int, int> ID;
-
-    // A public reference to the orbs generic colour
-    public OrbType Colour;
-
-    // Reference to this orbs physics rigidbody and it's rendering component
-    private SpriteRenderer spriteRenderer;
-    private Rigidbody2D orbRigidbody;
-
-    // Simply the orb colour
-    private Sprite spriteColour;
-
-    private Vector3 startPosition;
-    private Vector3 offsetToMouse;
-    private float distanceToCamera;
-
-    // The max speed the orb can move
-    private const float MAX_SPEED = 9;
-
-
 
     // Use this for initialization
     void Awake ()
@@ -46,8 +53,10 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         spriteRenderer = GetComponent<SpriteRenderer>();
         orbRigidbody = GetComponent<Rigidbody2D>();
 
+        orbTimer = GetComponentInChildren<TextMesh>();
+
         // Randomly assign a colour to this orb
-        spriteColour = ResourceManager.OrbColours[Random.Range(0, 5)];
+        spriteColour = ResourceManager.OrbColours[Random.Range(0, 4)];
 
         // Start rendering the assigned random colour
         spriteRenderer.sprite = spriteColour;
@@ -55,24 +64,60 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         // Determine colour code link
         Colour = OrbInfo.DetermineColourType(spriteColour.ToString()[0]);
 
-        Lifetime = 2;
+        Lifetime = 3;
     }
 
 
+    // Will be used for handling time and ui state
     private void Update()
     {
+        // Start timer once the orb has been touched
+        if (Touched)
+        {
+            Lifetime -= Time.deltaTime;
+
+            TimerText = Mathf.Round(Lifetime).ToString();
+
+            orbTimer.text = TimerText;
+
+            // Ensure it hasn't reached negative time
+            if (Lifetime < 0)
+            {
+                Lifetime = 0;
+                Destroy(0, true);
+            }
+            
+        }
+    }
+
+
+    // Fixed update for physics.. better for frame rate and rendering optimization
+    private void FixedUpdate()
+    {
+        
         // Check if this orb has passed the throw line
-        if (transform.position.y >= GameUI.Instance.ThrowLine.transform.position.y)
+        if (!LinePassed && transform.position.y >= GameUI.Instance.ThrowLine.transform.position.y)
         {
             LinePassed = true;
+            IsThrowable = false;
+
+            // We know the orb stopped on the line
+            if (orbRigidbody.velocity.magnitude == 0)
+            {
+                Destroy(0, true);
+            }
         }
     }
 
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        Touched = true;
+
         if (!IsThrowable)
+        {
             return;
+        }                   
 
         startPosition = transform.position;
         distanceToCamera = Mathf.Abs(startPosition.z - Camera.main.transform.position.z);
@@ -91,21 +136,10 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         if (!IsThrowable)
             return;
 
-        if (LinePassed)
-            Destroy(0);
-
-        orbRigidbody.velocity = eventData.delta;
-
         // Move the orb based on where the user is touching the screen
         orbRigidbody.MovePosition(Camera.main.ScreenToWorldPoint(
        new Vector3(Input.mousePosition.x, Input.mousePosition.y, distanceToCamera)
        ) + offsetToMouse);
-
-        // Normalize the speed if it reaches the max limit
-        if (orbRigidbody.velocity.magnitude > MAX_SPEED)
-        {
-            orbRigidbody.velocity = eventData.delta.normalized * MAX_SPEED;
-        }
     }
 
 
@@ -114,14 +148,27 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         if (!IsThrowable)
             return;
 
-        if (orbRigidbody.velocity.magnitude == 0)
+        // Destroy if it's sitting on the line
+        if (orbRigidbody.velocity.magnitude == 0 && LinePassed)
         {
-            Destroy(3);
+            Destroy(0, true);
         }
 
-        // They have touched the orb at least once
-        IsThrowable = false;
+
+        if (orbRigidbody.velocity.magnitude == 0)
+        {
+            Debug.Log("Kinda wokring");
+            orbRigidbody.velocity = eventData.delta.normalized * 1;
+        }
+
+        // Ensure orb doesn't exceed max velocity
+        orbRigidbody.velocity = 
+            eventData.delta.magnitude > MAX_SPEED ? 
+            eventData.delta.normalized * MAX_SPEED : 
+            eventData.delta;
+
         offsetToMouse = Vector3.zero;
+
     }
 
 
@@ -147,17 +194,19 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     }
 
 
-    public void Destroy(int seconds)
+    public void Destroy(int seconds, bool takeLife)
     {
         // Deduce the amount of orbs left in the active row
         RowManager.Instance.OrbsLeftInRow--;
         RowManager.Instance.CleanUpOrb(ID.Key, ID.Value);
 
+        if (takeLife)
+            GameManager.Instance.Lives--;
+
         if (seconds != 0)
             Destroy(gameObject, seconds);
         else
-        {
             Destroy(gameObject);
-        }
+        
     }
 }

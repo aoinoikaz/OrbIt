@@ -8,16 +8,16 @@ public class RowManager : MonoBehaviour
     public static RowManager Instance;
 
     // How many orbs are left in the active row
-    public int OrbsLeftInRow { get; set; }
-
-    // Whether or not a row is currently being shifted
-    public bool IsShifting { get; set; }
+    private int orbsLeft;
 
     private const int AmountOfRows = 3;
-    private const int AmountOfOrbsPerRow = 5;
+    private const int AmountOfOrbsPerRow = 4;
 
-    private float xOrbOffset = 1.25f;
+    private float xOrbOffset = 1.6f;
     private float yOrbOffset = 1.05f;
+
+    public delegate void ShiftDelegate();
+    public event ShiftDelegate HandleShift;
 
     // A reference to all of the orbs in game
     public Orb[,] Rows;
@@ -89,20 +89,23 @@ public class RowManager : MonoBehaviour
             }
         }
 
-        OrbsLeftInRow = 5;
+        OrbsLeftInRow = 4;
 
         // Clean up
         previousOrb = null;
         currentOrb = null;
         defaultOrb = null;
         orbCoordinates = null;
+
+        SetOrbIDs();
+        Activate();
     }
 
 
     // This function shifts each row up 1 space and add a new row to the bottom
     public void Shift(Orb orb)
     {
-        IsShifting = true;
+        OrbsLeftInRow = 4;
 
         for (int y = 0; y < AmountOfRows; y++)
         {
@@ -125,9 +128,7 @@ public class RowManager : MonoBehaviour
                 }
             }
         }
-        // Set state
-        IsShifting = false;
-        OrbsLeftInRow = 5;
+
         Activate();
     }
 
@@ -178,6 +179,28 @@ public class RowManager : MonoBehaviour
     }
 
 
+    // This will handle triggering the row shifting event
+    public int OrbsLeftInRow
+    {
+        get
+        {
+            return orbsLeft;
+        }
+
+        set
+        {
+            orbsLeft = value;
+            
+            // Fire the shifting event once there is no more orbs in the active row
+            if (orbsLeft == 0 && HandleShift != null)
+            {
+                HandleShift();
+            }
+        }
+    }
+
+
+    // This simply cleans up orb identifiers
     public void CleanUpOrb(int x, int y)
     {
         Rows[x, y] = null;

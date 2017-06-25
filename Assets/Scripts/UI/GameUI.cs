@@ -14,14 +14,11 @@ public class GameUI : MonoBehaviour
     // Main camera reference
     public Camera MainCamera;
 
-    // Amount of time left in each round
-    public float TimeLeft;
-    public float StartTime;
-
     // Label info
     public Text TimeLeftLabel;
     public Text PointsLabel;
     public Text OrbsLeftLabel;
+    public Text LivesLabel;
 
     // UI elements
     public GameObject GameOverPanel;
@@ -29,7 +26,6 @@ public class GameUI : MonoBehaviour
 
     // Amount to offset the y axis of the throwline
     private const float yOffset = 0.5f;
-
 
     // Use this for initialization
     private void Awake ()
@@ -40,14 +36,11 @@ public class GameUI : MonoBehaviour
         else if (Instance != this)
             Destroy(this);
 
-        if (OrbsLeftLabel == null)
-            OrbsLeftLabel = GameObject.Find("OrbsLeftLabel").GetComponent<Text>();
-
         if (PointsLabel == null)
             PointsLabel = GameObject.Find("PointsLabel").GetComponent<Text>();
 
-        if (TimeLeftLabel == null)  
-          TimeLeftLabel = GameObject.Find("TimeLeftLabel").GetComponent<Text>();
+        if (LivesLabel == null)
+            LivesLabel = GameObject.Find("LivesLabel").GetComponent<Text>();
 
         if(ScreenBounds == null)
         ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
@@ -63,37 +56,21 @@ public class GameUI : MonoBehaviour
             GameOverPanel.SetActive(false);
 
         MainCamera = Camera.main;
-
-        StartTime = TimeLeft = 30;
     }
 
 
     // Render stuff to screen
     private void Update()
     {
-        // Ensure the time hasn't ran out
-        if (TimeLeft > 0)
+        if (GameManager.Instance.Points != GameManager.Instance.OldPoints || GameManager.Instance.Lives != GameManager.Instance.OldLives)
         {
-            // Subtract a second from the start time
-            TimeLeft -= Time.deltaTime;
-
-            // Render the score to screen
-            TimeLeftLabel.text = "Time left: " + Mathf.Round(TimeLeft);
             PointsLabel.text = "Points: " + GameManager.Instance.Points;
-            OrbsLeftLabel.text = "Orbs left: " + RowManager.Instance.OrbsLeftInRow;
-        }
-        else
-        {
-            // Check if the game is in progress
-            if (GameManager.Instance.InProgress)
-            {
-                GameManager.Instance.GameOver();
-            }
+            LivesLabel.text = "Lives: " + GameManager.Instance.Lives;
         }
     }
 
 
-    public void SetupUI()
+    public void Setup()
     {
         // Get the coordinates of the the 4 vertex's of the camera viewport
         Vector2 bottomLeft = MainCamera.ScreenToWorldPoint(new Vector3(0, 0, MainCamera.nearClipPlane));
@@ -121,6 +98,10 @@ public class GameUI : MonoBehaviour
     public void ShowGameOverPanel()
     {
         GameOverPanel.SetActive(true);
+        ThrowLine.SetActive(false);
+        PointsLabel.gameObject.SetActive(false);
+        LivesLabel.gameObject.SetActive(false);
+
         GameObject.Find("GameOverScoreLabel").GetComponent<Text>().text = "You scored: " + GameManager.Instance.Points;
     }
 

@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-public class ResourceManager : MonoBehaviour
+public class ResourceManager
 {
     public static Sprite[] OrbColours;
+    public static Sprite[] NetColours;
     public static Orb OrbInstance;
     public static Net NetInstance;
 
@@ -18,5 +19,8 @@ public class ResourceManager : MonoBehaviour
 
         if (NetInstance == null)
             NetInstance = Resources.Load<Net>("Prefabs/Net");
+
+        if (NetColours == null)
+            NetColours = Resources.LoadAll<Sprite>("Graphics/Nets");
     }
 }

@@ -6,10 +6,10 @@ public class Net : MonoBehaviour
     private SpriteRenderer netRenderer;
 
     // The sprite source
-    private Sprite spriteColour;
+    public Sprite spriteColour;
 
     // A representation of the net's colour that is comparable to orbs
-    private OrbType myNetColour;
+    public OrbType myNetColour;
 
     private void Start()
     {
@@ -17,9 +17,10 @@ public class Net : MonoBehaviour
         netRenderer = GetComponent<SpriteRenderer>();
 
         // Set a reference to the net colour
-        spriteColour = netRenderer.sprite;
+        netRenderer.sprite = spriteColour;
 
         myNetColour = OrbInfo.DetermineColourType(spriteColour.ToString()[0]);
+        
     }
 
 
@@ -34,15 +35,24 @@ public class Net : MonoBehaviour
             // Check if the colours match
             if (incomingOrb.Colour == myNetColour)
             {
-                GameManager.Instance.Add();
+                GameManager.Instance.Points++;
             }
             else
             {
-                GameManager.Instance.Deduct();
+                GameManager.Instance.Lives--;
             }
 
             // Properly destroy the orb
-            incomingOrb.Destroy(0);
+            incomingOrb.Destroy(0, false);
         }
+    }
+
+
+    public void Destroy(int seconds)
+    {
+        if (seconds != 0)
+            Destroy(gameObject, seconds);
+        else
+            Destroy(gameObject);
     }
 }
