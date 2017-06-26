@@ -64,6 +64,7 @@ public class GameUI : MonoBehaviour
     {
         if (GameManager.Instance.Points != GameManager.Instance.OldPoints || GameManager.Instance.Lives != GameManager.Instance.OldLives)
         {
+            Debug.Log("Updated UI.");
             PointsLabel.text = "Points: " + GameManager.Instance.Points;
             LivesLabel.text = "Lives: " + GameManager.Instance.Lives;
         }

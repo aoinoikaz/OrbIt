@@ -64,7 +64,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         // Determine colour code link
         Colour = OrbInfo.DetermineColourType(spriteColour.ToString()[0]);
 
-        Lifetime = 3;
+        Lifetime = 4;
     }
 
 

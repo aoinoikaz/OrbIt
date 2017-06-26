@@ -9,7 +9,7 @@ public class NetManager : MonoBehaviour
     public Transform[] NetPositions;
 
     // Constants
-    private const float xOffset = 1.6f;
+    private const float xOffset = 1.4f;
     private const int AmountOfNets = 4;
 
 
@@ -60,6 +60,7 @@ public class NetManager : MonoBehaviour
     }
 
 
+    // This function implements the fisher yates shuffling data structure. It simply shuffles the nets position properly each time.
     public void Shuffle()
     {
         int n = NetPositions.Length;
@@ -69,9 +70,6 @@ public class NetManager : MonoBehaviour
             n--;
 
             int k = Random.Range(0, AmountOfNets);
-
-            Debug.Log("Random inx: " + k);
-            Debug.Log(NetPositions[k].position);
 
             Vector3 pos = NetPositions[k].position;
 

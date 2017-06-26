@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public int OldLives { get; set; }
 
 
+    // Using start instead of awake for initialization so it gives time for the other component dependencies
     private void Start ()
     {
         // Again, setup singleton
@@ -38,16 +40,15 @@ public class GameManager : MonoBehaviour
         // Spawn nets
         NetManager.Instance.SpawnNets(ResourceManager.NetInstance);
 
+        // Subscribe to row shifting event
+        RowManager.Instance.HandleShift += OnShift;
+
         // Set game state
         InProgress = true;
 
         // Set initial points
         Points = 0;
         Lives = 3;
-
-        RowManager.Instance.HandleShift += OnShift;
-
-        Debug.Log("GM Init");
     }
 
 
@@ -62,8 +63,6 @@ public class GameManager : MonoBehaviour
     // This is called automatically by the row manager when a row needs to be shifted
     public void OnShift()
     {
-        Debug.Log("Handling delegate shift event");
-
         if (InProgress)
         {
             // Shift rows

@@ -29,7 +29,7 @@ public class Net : MonoBehaviour
         // Get the colour from the incoming orb
         Orb incomingOrb = collision.gameObject.GetComponent<Orb>();
 
-        // Assure it's an orb
+        // ensure it's an orb
         if (incomingOrb != null)
         {
             // Check if the colours match
@@ -41,10 +41,10 @@ public class Net : MonoBehaviour
             {
                 GameManager.Instance.Lives--;
             }
-
-            // Properly destroy the orb
-            incomingOrb.Destroy(0, false);
         }
+
+        // Properly destroy the orb
+        incomingOrb.Destroy(0, false);
     }
 
 
