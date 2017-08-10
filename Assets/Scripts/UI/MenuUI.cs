@@ -14,7 +14,6 @@ public class MenuUI : MonoBehaviour
             PlayNow = GameObject.Find("PlayNowButton").GetComponent<Button>();
 	}
 
-
     public void Login()
     {
         SceneManager.LoadScene(1);

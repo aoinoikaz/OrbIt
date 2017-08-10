@@ -11,6 +11,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D orbRigidbody;
 
+    // The text component that is used to render the orbs amount of time left
     private TextMesh orbTimer;
 
     // Simply the orb colour
@@ -84,7 +85,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
             if (Lifetime < 0)
             {
                 Lifetime = 0;
-                Destroy(0, true);
+                Destroy(0);
             }
             
         }
@@ -94,7 +95,6 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     // Fixed update for physics.. better for frame rate and rendering optimization
     private void FixedUpdate()
     {
-        
         // Check if this orb has passed the throw line
         if (!LinePassed && transform.position.y >= GameUI.Instance.ThrowLine.transform.position.y)
         {
@@ -104,7 +104,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
             // We know the orb stopped on the line
             if (orbRigidbody.velocity.magnitude == 0)
             {
-                Destroy(0, true);
+                Destroy(0);
             }
         }
     }
@@ -151,7 +151,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         // Destroy if it's sitting on the line
         if (orbRigidbody.velocity.magnitude == 0 && LinePassed)
         {
-            Destroy(0, true);
+            Destroy(0);
         }
 
 
@@ -194,14 +194,11 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     }
 
 
-    public void Destroy(int seconds, bool takeLife)
+    public void Destroy(int seconds)
     {
         // Deduce the amount of orbs left in the active row
         RowManager.Instance.OrbsLeftInRow--;
         RowManager.Instance.CleanUpOrb(ID.Key, ID.Value);
-
-        if (takeLife)
-            GameManager.Instance.Lives--;
 
         if (seconds != 0)
             Destroy(gameObject, seconds);

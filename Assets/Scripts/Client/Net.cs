@@ -11,16 +11,25 @@ public class Net : MonoBehaviour
     // A representation of the net's colour that is comparable to orbs
     public OrbType myNetColour;
 
+    // This will control the orbs audio
+    private AudioSource audioController;
+
+    // Public so we can assign them in inspector and play them at runtime with only 1 audio source
+    public AudioClip goalClip;
+    public AudioClip deathClip;
+
+
     private void Start()
     {
         // Get this nets sprite renderer
         netRenderer = GetComponent<SpriteRenderer>();
 
+        audioController = GetComponent<AudioSource>();
+
         // Set a reference to the net colour
         netRenderer.sprite = spriteColour;
 
         myNetColour = OrbInfo.DetermineColourType(spriteColour.ToString()[0]);
-        
     }
 
 
@@ -35,16 +44,20 @@ public class Net : MonoBehaviour
             // Check if the colours match
             if (incomingOrb.Colour == myNetColour)
             {
+                audioController.PlayOneShot(goalClip);
                 GameManager.Instance.Points++;
+                GameUI.Instance.TimeLeft++;
+                
             }
             else
             {
-                GameManager.Instance.Lives--;
+                audioController.PlayOneShot(deathClip);
+                GameUI.Instance.TimeLeft--;
             }
         }
 
         // Properly destroy the orb
-        incomingOrb.Destroy(0, false);
+        incomingOrb.Destroy(0);
     }
 
 

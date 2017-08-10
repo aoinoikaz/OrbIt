@@ -14,10 +14,6 @@ public class GameManager : MonoBehaviour
     // Used to get rid of concatenation
     public int OldPoints { get; set; }
 
-    public int Lives { get; set; }
-
-    public int OldLives { get; set; }
-
 
     // Using start instead of awake for initialization so it gives time for the other component dependencies
     private void Start ()
@@ -47,16 +43,9 @@ public class GameManager : MonoBehaviour
         InProgress = true;
 
         // Set initial points
+        OldPoints = -1;
         Points = 0;
-        Lives = 3;
-    }
 
-
-    private void Update()
-    {
-        // Game over if we hve no lives left and the game is in progress
-        if (Lives == 0 && InProgress)
-            GameOver();
     }
 
 
@@ -92,7 +81,7 @@ public class GameManager : MonoBehaviour
         // clear all orbs
         foreach(Orb orb in orbClones)
         {
-            orb.Destroy(0, false);
+            orb.Destroy(0);
         }
 
         // render game over ui

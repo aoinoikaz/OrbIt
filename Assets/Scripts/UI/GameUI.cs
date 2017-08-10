@@ -17,8 +17,6 @@ public class GameUI : MonoBehaviour
     // Label info
     public Text TimeLeftLabel;
     public Text PointsLabel;
-    public Text OrbsLeftLabel;
-    public Text LivesLabel;
 
     // UI elements
     public GameObject GameOverPanel;
@@ -27,6 +25,8 @@ public class GameUI : MonoBehaviour
     // Amount to offset the y axis of the throwline
     private const float yOffset = 0.5f;
 
+    public float TimeLeft = 30;
+    
     // Use this for initialization
     private void Awake ()
     {
@@ -39,8 +39,8 @@ public class GameUI : MonoBehaviour
         if (PointsLabel == null)
             PointsLabel = GameObject.Find("PointsLabel").GetComponent<Text>();
 
-        if (LivesLabel == null)
-            LivesLabel = GameObject.Find("LivesLabel").GetComponent<Text>();
+        if (TimeLeftLabel == null)
+            TimeLeftLabel = GameObject.Find("TimeLeftLabel").GetComponent<Text>();
 
         if(ScreenBounds == null)
         ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
@@ -62,11 +62,26 @@ public class GameUI : MonoBehaviour
     // Render stuff to screen
     private void Update()
     {
-        if (GameManager.Instance.Points != GameManager.Instance.OldPoints || GameManager.Instance.Lives != GameManager.Instance.OldLives)
+        if (GameManager.Instance.Points != GameManager.Instance.OldPoints)
         {
-            Debug.Log("Updated UI.");
             PointsLabel.text = "Points: " + GameManager.Instance.Points;
-            LivesLabel.text = "Lives: " + GameManager.Instance.Lives;
+            GameManager.Instance.OldPoints = GameManager.Instance.Points;
+        }
+
+
+        // if there's time left
+        if (TimeLeft > 0)
+        {
+            TimeLeftLabel.text = Mathf.Round(TimeLeft).ToString();
+
+            TimeLeft -= Time.deltaTime;
+
+            if (TimeLeft < 0)
+            {
+                TimeLeft = 0;
+                GameManager.Instance.GameOver();
+            }
+
         }
     }
 
@@ -90,20 +105,23 @@ public class GameUI : MonoBehaviour
     }
 
 
+    public void ShowGameOverPanel()
+    {
+        GameOverPanel.SetActive(true);
+        ThrowLine.SetActive(false);
+        PointsLabel.gameObject.SetActive(false);
+        TimeLeftLabel.gameObject.SetActive(false);
+
+        GameObject.Find("GameOverScoreLabel").GetComponent<Text>().text = "You scored: " + GameManager.Instance.Points;
+    }
+
+
     public void Return()
     {
         SceneManager.LoadScene(0);
     }
 
 
-    public void ShowGameOverPanel()
-    {
-        GameOverPanel.SetActive(true);
-        ThrowLine.SetActive(false);
-        PointsLabel.gameObject.SetActive(false);
-        LivesLabel.gameObject.SetActive(false);
-
-        GameObject.Find("GameOverScoreLabel").GetComponent<Text>().text = "You scored: " + GameManager.Instance.Points;
-    }
+    
 
 }
