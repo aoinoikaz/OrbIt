@@ -181,10 +181,7 @@ public class RowManager : MonoBehaviour
     // This will handle triggering the row shifting event
     public int OrbsLeftInRow
     {
-        get
-        {
-            return orbsLeft;
-        }
+        get { return orbsLeft; }
 
         set
         {
