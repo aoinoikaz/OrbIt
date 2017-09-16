@@ -32,8 +32,6 @@ public class NetManager : MonoBehaviour
         Net currentNet = null;
         Net previousNet = null;
 
-        Debug.Log("Inside SpawnNets: " + net);
-
         for (int i = 0; i < AmountOfNets; i++)
         {
             // if we're on the first net spawn
@@ -46,7 +44,9 @@ public class NetManager : MonoBehaviour
             else
             {
                 // spawn next net at an offset of the previous
-                currentNet = Instantiate(net, new Vector3(previousNet.transform.position.x + xOffset, previousNet.transform.position.y, 0), Quaternion.identity);
+                currentNet = Instantiate(net, new Vector3(previousNet.transform.position.x + xOffset, 
+                    previousNet.transform.position.y, 0), Quaternion.identity);
+
                 previousNet = currentNet;
                 currentNet = null;
             }
@@ -60,7 +60,8 @@ public class NetManager : MonoBehaviour
     }
 
 
-    // This function implements the fisher yates shuffling data structure. It simply shuffles the nets position properly each time.
+    // This function implements the fisher yates shuffling data structure. 
+    // It simply shuffles the nets position properly each time.
     public void Shuffle()
     {
         int n = NetPositions.Length;
@@ -70,13 +71,10 @@ public class NetManager : MonoBehaviour
             n--;
 
             int k = Random.Range(0, AmountOfNets);
-
+       
             Vector3 pos = NetPositions[k].position;
-
             NetPositions[k].position = NetPositions[n].position;
-
             NetPositions[n].position = new Vector3(pos.x, pos.y, pos.z);
-
         }
     }
 }

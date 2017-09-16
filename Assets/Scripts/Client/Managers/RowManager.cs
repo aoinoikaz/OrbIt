@@ -159,7 +159,6 @@ public class RowManager : MonoBehaviour
                 {
                     // Freeze the orb
                     Rows[x, y].Freeze();
-
                 }
             }
         }

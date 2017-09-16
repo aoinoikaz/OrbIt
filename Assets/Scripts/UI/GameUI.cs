@@ -43,7 +43,7 @@ public class GameUI : MonoBehaviour
             TimeLeftLabel = GameObject.Find("TimeLeftLabel").GetComponent<Text>();
 
         if(ScreenBounds == null)
-        ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
+            ScreenBounds = GameObject.Find("ScreenBounds").GetComponent<EdgeCollider2D>();
 
         if (GameOverPanel == null)
             GameOverPanel = GameObject.Find("GameOverPanel");
@@ -81,7 +81,6 @@ public class GameUI : MonoBehaviour
                 TimeLeft = 0;
                 GameManager.Instance.GameOver();
             }
-
         }
     }
 
@@ -120,8 +119,4 @@ public class GameUI : MonoBehaviour
     {
         SceneManager.LoadScene(0);
     }
-
-
-    
-
 }
