@@ -8,7 +8,7 @@ public class MenuUI : MonoBehaviour
     private Button PlayNow;
 
     // Called before anything else
-	private void Awake ()
+	private void Start ()
     {
         if (PlayNow == null)
             PlayNow = GameObject.Find("PlayNowButton").GetComponent<Button>();

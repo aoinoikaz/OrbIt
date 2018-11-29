@@ -46,13 +46,10 @@ public class Net : MonoBehaviour
             {
                 audioController.PlayOneShot(goalClip);
                 GameManager.Instance.Points++;
-                GameUI.Instance.TimeLeft++;
-                
             }
             else
             {
                 audioController.PlayOneShot(deathClip);
-                GameUI.Instance.TimeLeft--;
             }
         }
 

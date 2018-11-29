@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbIt", "OrbIt.csproj", "{72A485D7-2957-D00A-0CD6-94534118272E}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{26C598BA-CC12-B0D6-568D-2E4A5968B60A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{72A485D7-2957-D00A-0CD6-94534118272E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72A485D7-2957-D00A-0CD6-94534118272E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72A485D7-2957-D00A-0CD6-94534118272E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72A485D7-2957-D00A-0CD6-94534118272E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26C598BA-CC12-B0D6-568D-2E4A5968B60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26C598BA-CC12-B0D6-568D-2E4A5968B60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26C598BA-CC12-B0D6-568D-2E4A5968B60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26C598BA-CC12-B0D6-568D-2E4A5968B60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

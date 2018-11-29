@@ -8,13 +8,13 @@ public class RowManager : MonoBehaviour
     public static RowManager Instance;
 
     // How many orbs are left in the active row
-    private int orbsLeft;
+    private int orbsLeftInActiveRow;
 
     private const int AmountOfRows = 3;
     private const int AmountOfOrbsPerRow = 4;
 
-    private float xOrbOffset = 1.6f;
-    private float yOrbOffset = 1.05f;
+    private readonly float xOrbOffset = 1.6f;
+    private readonly float yOrbOffset = 1.05f;
 
     public delegate void ShiftDelegate();
     public event ShiftDelegate HandleShift;
@@ -89,7 +89,7 @@ public class RowManager : MonoBehaviour
             }
         }
 
-        OrbsLeftInRow = 4;
+        OrbsLeftInActiveRow = 4;
 
         // Clean up
         previousOrb = null;
@@ -105,7 +105,7 @@ public class RowManager : MonoBehaviour
     // This function shifts each row up 1 space and add a new row to the bottom
     public void Shift(Orb orb)
     {
-        OrbsLeftInRow = 4;
+        OrbsLeftInActiveRow = 4;
 
         for (int y = 0; y < AmountOfRows; y++)
         {
@@ -179,16 +179,16 @@ public class RowManager : MonoBehaviour
 
 
     // This will handle triggering the row shifting event
-    public int OrbsLeftInRow
+    public int OrbsLeftInActiveRow
     {
-        get { return orbsLeft; }
+        get { return orbsLeftInActiveRow; }
 
         set
         {
-            orbsLeft = value;
+            orbsLeftInActiveRow = value;
             
             // Fire the shifting event once there is no more orbs in the active row
-            if (orbsLeft == 0 && HandleShift != null)
+            if (orbsLeftInActiveRow == 0 && HandleShift != null)
             {
                 HandleShift();
             }

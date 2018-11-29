@@ -12,7 +12,6 @@ public class NetManager : MonoBehaviour
     private const float xOffset = 1.4f;
     private const int AmountOfNets = 4;
 
-
     void Awake()
     {
         if (Instance == null)
@@ -22,7 +21,6 @@ public class NetManager : MonoBehaviour
 
         NetPositions = new Transform[AmountOfNets];
 
-        Debug.Log("NetManager: " + this);
     }
 
 

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +13,10 @@ public class GameManager : MonoBehaviour
     // Used to get rid of concatenation
     public int OldPoints { get; set; }
 
+    public float GameTimeLeft { get; private set; }
+
+    public delegate void GameOverDelegate();
+    public event GameOverDelegate HandleGameOver;
 
     // Using start instead of awake for initialization so it gives time for the other component dependencies
     private void Start ()
@@ -23,21 +27,18 @@ public class GameManager : MonoBehaviour
         else if (Instance != this)
             Destroy(this);
 
-        // Load resources
         ResourceManager.LoadGameResources();
-
-        // Initialize user interface 
-        GameUI.Instance.Setup();
-
-        // Spawn the rows, set orb identifiers and enable interaction
-        RowManager.Instance.SpawnRows(ResourceManager.OrbInstance);
-
-        // Spawn nets
         NetManager.Instance.SpawnNets(ResourceManager.NetInstance);
-
-        // Subscribe to row shifting event
+        RowManager.Instance.SpawnRows(ResourceManager.OrbInstance);
         RowManager.Instance.HandleShift += OnShift;
 
+        GameUI.Instance.Subscribe();
+
+        Init(30f);
+    }
+
+    private void Init(float gametime)
+    {
         // Set game state
         InProgress = true;
 
@@ -45,6 +46,27 @@ public class GameManager : MonoBehaviour
         OldPoints = -1;
         Points = 0;
 
+        GameTimeLeft = gametime;
+    }
+
+    // Render stuff to screen
+    private void Update()
+    {
+        // if there's time left
+        if (GameTimeLeft > 0)
+        {
+            GameTimeLeft -= Time.deltaTime;
+
+            if (GameTimeLeft < 0)
+            {
+                GameTimeLeft = 0;
+                if (HandleGameOver != null)
+                {
+                    CleanUp();
+                    HandleGameOver();
+                }
+            }
+        }
     }
 
 
@@ -62,7 +84,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void GameOver()
+    public void CleanUp()
     {
         // Set game state to not in progress
         InProgress = false;
@@ -83,7 +105,6 @@ public class GameManager : MonoBehaviour
             orb.Destroy(0);
         }
 
-        // render game over ui
-        GameUI.Instance.ShowGameOverPanel();
+        Debug.Log("Cleaned up");
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using System;
 
 public class GameUI : MonoBehaviour
 {
@@ -25,8 +25,6 @@ public class GameUI : MonoBehaviour
     // Amount to offset the y axis of the throwline
     private const float yOffset = 0.5f;
 
-    public float TimeLeft = 30;
-    
     // Use this for initialization
     private void Awake ()
     {
@@ -56,7 +54,10 @@ public class GameUI : MonoBehaviour
             GameOverPanel.SetActive(false);
 
         MainCamera = Camera.main;
+
+        Setup();
     }
+
 
 
     // Render stuff to screen
@@ -68,25 +69,19 @@ public class GameUI : MonoBehaviour
             GameManager.Instance.OldPoints = GameManager.Instance.Points;
         }
 
-
+        float t = GameManager.Instance.GameTimeLeft;
+        
         // if there's time left
-        if (TimeLeft > 0)
+        if (t > 0)
         {
-            TimeLeftLabel.text = Mathf.Round(TimeLeft).ToString();
-
-            TimeLeft -= Time.deltaTime;
-
-            if (TimeLeft < 0)
-            {
-                TimeLeft = 0;
-                GameManager.Instance.GameOver();
-            }
+            TimeLeftLabel.text = Mathf.Round(t).ToString();
         }
     }
 
 
-    public void Setup()
+    private void Setup()
     {
+        
         // Get the coordinates of the the 4 vertex's of the camera viewport
         Vector2 bottomLeft = MainCamera.ScreenToWorldPoint(new Vector3(0, 0, MainCamera.nearClipPlane));
         Vector2 topLeft = MainCamera.ScreenToWorldPoint(new Vector3(0, MainCamera.pixelHeight, MainCamera.nearClipPlane));
@@ -104,13 +99,17 @@ public class GameUI : MonoBehaviour
     }
 
 
-    public void ShowGameOverPanel()
+    public void Subscribe()
+    {
+        GameManager.Instance.HandleGameOver += OnGameOver;
+    }
+
+    public void OnGameOver()
     {
         GameOverPanel.SetActive(true);
         ThrowLine.SetActive(false);
         PointsLabel.gameObject.SetActive(false);
         TimeLeftLabel.gameObject.SetActive(false);
-
         GameObject.Find("GameOverScoreLabel").GetComponent<Text>().text = "You scored: " + GameManager.Instance.Points;
     }
 

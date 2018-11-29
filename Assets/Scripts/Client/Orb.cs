@@ -10,6 +10,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     // Reference to this orbs physics rigidbody and it's rendering component
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D orbRigidbody;
+    private CircleCollider2D circleCollider2d;
 
     // The text component that is used to render the orbs amount of time left
     private TextMesh orbTimer;
@@ -53,7 +54,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         orbRigidbody = GetComponent<Rigidbody2D>();
-
+        circleCollider2d = orbRigidbody.GetComponent<CircleCollider2D>();
         orbTimer = GetComponentInChildren<TextMesh>();
 
         // Randomly assign a colour to this orb
@@ -65,7 +66,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
         // Determine colour code link
         Colour = OrbInfo.DetermineColourType(spriteColour.ToString()[0]);
 
-        Lifetime = 4;
+        Lifetime = 2;
     }
 
 
@@ -154,10 +155,8 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
             Destroy(0);
         }
 
-
         if (orbRigidbody.velocity.magnitude == 0)
         {
-            Debug.Log("Kinda wokring");
             orbRigidbody.velocity = eventData.delta.normalized * 1;
         }
 
@@ -176,15 +175,14 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     public void Defrost()
     {
         IsFrozen = false;
-        orbRigidbody.GetComponent<CircleCollider2D>().enabled = true;
+        circleCollider2d.enabled = true;
     }
-
 
     // This function freezes the position of the orb
     public void Freeze()
     {
         IsFrozen = true;
-        orbRigidbody.GetComponent<CircleCollider2D>().enabled = false;
+        circleCollider2d.enabled = false;
     }
 
 
@@ -197,7 +195,7 @@ public class Orb : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandl
     public void Destroy(int seconds)
     {
         // Deduce the amount of orbs left in the active row
-        RowManager.Instance.OrbsLeftInRow--;
+        RowManager.Instance.OrbsLeftInActiveRow--;
         RowManager.Instance.CleanUpOrb(ID.Key, ID.Value);
 
         if (seconds != 0)
