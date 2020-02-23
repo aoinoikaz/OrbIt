@@ -2,8 +2,6 @@
 
 ### What is it? ###
 
-* The Divergent Network brings you yet again another fast paced mobile extravaganza!
-* This fast-paced, 2D mobile strategy game provides users with an in-depth experience at throwing orbs!  
-
-* Game version: 1.0.3
+* I developed this mobile game in Unity game engine using C#
+* This fast-paced, 2D mobile strategy game allows users to throw orbs into the corresponding coloured nets and try to earn as many points before the time runs out!
 
