@@ -1,4 +1,4 @@
-# Gondola Bros Presents: ORBIT
+ORBIT
 
 ### What is it? 
 
